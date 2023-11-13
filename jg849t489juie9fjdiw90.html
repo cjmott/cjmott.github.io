@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="https://unpkg.com/jspsych@7.3.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-slider-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.1"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.2"></script>
+    <script src="jspsych/dist/plugin-survey-likert.js"></script>
+    <script src="content/consent.js"></script>
+    <script src="content/screener_text.js"></script>
+    <script src="content/names.js"></script>
+    <script src="content/vignette_text.js"></script>
+    <link href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <style> 
+      .jspsych-content {
+        text-align: left; width: 600px;
+      }
+    </style>
+  </head>
+  <body></body>
+  <script>
+
+    /* initialize jsPsych */
+    var jsPsych = initJsPsych({
+      on_finish: function() {
+        jsPsych.data.displayData();
+      }
+    });
+
+    // generate a random subject ID with 15 characters
+    var subject_id = jsPsych.randomization.randomID(15);
+
+    // Shuffle risk, value, and outcome conditions
+    var num = toString(Math.getRandomInt(99));
+
+    var names = vignettes = jsPsych.randomization.repeat(names, 1);
+
+    var vignetteArray = ["chair", "bed", "stool", "stair", "tv", "lamp", "desk", "rack"];
+    //var vignettes = jsPsych.randomization.repeat(vignetteArray, 1);
+
+    var riskArray = ["low", "low", "low", "low", "high", "high", "high", "high"];
+    //var risks = jsPsych.randomization.repeat(riskArray, 1);
+
+    var valueArray = ["low", "low", "high", "high", "low", "low", "high", "high"];
+    //var values = jsPsych.randomization.repeat(valueArray, 1);
+
+    var goodGoalsArray = ["to send their children to the summer camp where all their friends go",
+                          "the deposit on an assisted living apartment for their elderly parents",
+                          "to take their family on a vacation",
+                          "repairs for their car that just broke down",
+                          "to pay the property tax bill on their home"];
+    var goodGoals = jsPsych.randomization.repeat(goodGoalsArray, 1);
+
+    var badGoalsArray = ["a new TV", "a new couch", "a new computer", "a new dishwasher", "a new jacket"];
+    var badGoals = jsPsych.randomization.repeat(badGoalsArray, 1);
+
+    var outcomes = [];
+    for (r in risks) {
+      if (r == "low") {
+        var p = 0.2;
+      } else {
+        var p = 0.8;
+      }
+      var outcome = jsPsych.randomization.sampleBernoulli(p);
+
+      if (outcome == 1) {
+        var outcome_text = "harm";
+      } else {
+        var outcome_text = "no_harm";
+      }
+      outcomes.push(outcome_text);
+    }
+
+    var outcome = ["harm", "no_harm", "harm", "no_harm", "harm", "no_harm", "harm", "no_harm"];
+
+    // Create image names for trials
+    trials = [];
+
+    for (let i = 0; i < vignettes.length; i++) {
+      var name = names[i];
+      var vignette = vignetteArray[i];
+      var value = valueArray[i];
+      var risk = riskArray[i];
+      var outcome = outcome[i];
+
+      if (value == "low") {
+        var goal = badGoals.pop()
+      } else {
+        var goal = goodGoals.pop()
+      }
+
+      var image1 = "images/" + vign + "/1_vign_" + vignette + ".png";
+      var image2 = "images/" + vign + "/2_vign_" + vignette + "_risk_" + risk + "_" + num + ".png";
+      var image3 = "images/" + vign + "/3_vign_" + vignette + ".png";
+      var image4 = "images/" + vign + "4_vign_" + vignette + "_outcome_" + outcome + ".png";
+
+      var texts = vignette_text(name, goal, risk, vignette, outcome, [image1, image2, image3, image4]);
+
+      trials.push({"subject_id": subject_id,
+                  "trial": i,
+                  "name": name,
+                  "vignette": vignette,
+                  "value": value,
+                  "risk": risk,
+                  "goal": goal,
+                  "text1": texts['text1'],
+                  "text2": texts['text2'],
+                  "text3": texts['text3'],
+                  "text4": texts['text4'],
+                  "text_outcome": texts['text_outcome'],
+                  "text_outcome_short": texts['text_outcome_short'],
+                  "risk_obj_text": texts['risk_obj_text'],
+                  "risk_sub_text": texts['risk_sub_text'],
+                  "image1": image1,
+                  "image2": image2,
+                  "image3": image3,
+                  "image4": image4})
+
+    }
+
+    // Randomize trial order
+    var trials = jsPsych.randomization.repeat(trials, 1);
+
+    // record the condition assignment in the jsPsych data
+    // this adds a property called 'subject' and a property called 'condition' to every trial
+    jsPsych.data.addProperties({
+      subject: subject_id,
+    });
+
+    /* create timeline */
+    var timeline = [];
+
+    /* preload images */
+    timeline.push({
+      type: jsPsychPreload,
+      images: imgs
+    });
+
+    /* define welcome message trial */
+    timeline.push({
+        type: jsPsychInstructions,
+        pages: [
+        screener_text
+        ],
+        show_clickable_nav: true
+    });
+
+    /* Attention checks*/
+    var likert_scale = [
+      "1<br>Strongly Disagree", 
+      "2", 
+      "3",
+      "4<br>Neutral", 
+      "5",
+      "6", 
+      "7<br>Strongly Agree"
+    ];
+
+    timeline.push({
+      type: jsPsychSurveyLikert,
+      preamble: `<div><b>Please indicate the extent to which you agree that the statements below are true of yourself.</b>
+      <br><br>
+      <i>(These are not trick questions. The answers should be obvious if you are not a bot.)</i></div>`,
+      questions: [
+        {prompt: "I have traveled to another planet.", name: 'planet', labels: likert_scale},
+        {prompt: "I am a human being.", name: 'human', labels: likert_scale},
+        {prompt: "I have used cooked pasta to hammer in a nail.", name: 'pasta', labels: likert_scale},
+        {prompt: "I am a large language model.", name: 'llm', labels: likert_scale},
+      ],
+      randomize_question_order: true
+    });
+
+    /* Qualifications */
+    timeline.push({
+      type: jsPsychSurveyMultiChoice,
+      questions: [
+        {
+          prompt: "Are you 18 years of age or older?", 
+          name: 'age_qual', 
+          options: ['Yes', 'No'], 
+          required: true
+        }, 
+        {
+          prompt: "Do you live in the United States?", 
+          name: 'resid_qual', 
+          options: ['Yes', 'No'], 
+          required: true
+        }
+      ],
+    });
+
+    /* Consent form */
+    timeline.push({
+      type: jsPsychHtmlButtonResponse,
+      stimulus: consent_text + `<br><br><p>Please click "Yes" below if you consent to participate in this study.</p><br><br>` ,
+      choices: ['No', 'Yes'],
+      prompt: "<p>Do you consent to participating in this study?</p>"
+    });
+
+    /* Explain study and compensation */
+    timeline.push({
+        type: jsPsychInstructions,
+        pages: [
+        `Thank you for participating in our research! In this study, you will read a series of stories about people who engage 
+        in behavior that might result in harm to other people or their property. We will ask for your thoughts and opinions about 
+        these scenarios as they unfold.`,
+        `All of your responses will be kept confidential and will never be associated with you personally. 
+        What that means is that you should feel free to respond to all questions with whatever response comes naturally to you. 
+        This is not a test. We are interested only in your personal opinions based on the information you receive.`,
+        `In addition to the course credit you can earn for completing this survey,
+        you will be entered into a raffle upon completion of the study for a $50 Amazon Gift Card. 
+        Your probability of winning that raffle will depend on the number of raffle tickets you have at the end of the study.
+        You will have opportunities to earn raffle tickets throughout the study by correctly predicting
+        whether or not a person's behavior will or will not result in harm to another person or their property.`,
+        ],
+        show_clickable_nav: true
+    });
+
+    for (let i = 0; i < vignettes.length; i++) {
+
+      /* Get trial */
+      var trial = trials[i];
+      var name = trial['name'];
+
+      /* Define single trial for loop */
+      timeline.push({
+        type: jsPsychInstructions,
+        pages: [
+        trial['text1'],
+        trial['text2'],
+        trial['text3'],
+        trial['text4']
+        ],
+        show_clickable_nav: true
+      });
+
+      /* Initial risk judgments */
+      timeline.push({
+        type: jsPsychMultipleSlider,
+        preamble: `Please answer the questions below:`,
+        questions: [
+            {prompt: trial['risk_obj_text'], name: 'risk_obj1', ticks: [0, 50, 100]},
+            {prompt: trial['risk_sub_text'], name: 'risk_sub1', ticks: [0, 50, 100]}
+          ],
+        require_movement: true,
+        randomize_question_order: true
+      });
+
+      /* Outcome */
+      timeline.push({
+        type: jsPsychInstructions,
+        pages: [
+        trial['text_outcome'],
+        ],
+        show_clickable_nav: true
+      });
+
+      /* Second risk judgments */
+      timeline.push({
+        type: jsPsychMultipleSlider,
+        preamble: `Please answer the questions below for a second time.<br><br>
+        When doing so, please answer based on the information available to ` + name + ` at the time of the sale.`,
+        questions: [
+            {prompt: trial['risk_obj_text'], name: 'risk_obj2', ticks: [0, 50, 100]},
+            {prompt: trial['risk_sub_text'], name: 'risk_sub2', ticks: [0, 50, 100]}
+          ],
+        require_movement: true,
+        randomize_question_order: true
+      });
+
+      /* Value judgments */
+      timeline.push({
+        type: jsPsychMultipleSlider,
+        preamble: `Please answer the questions below.`,
+        questions: [
+            {prompt: trial['self_goal_text'], name: 'self_goal', ticks: [0, 50, 100]},
+            {prompt: trial['self_goal_avg_text'], name: 'self_goal_avg', ticks: [0, 50, 100]},
+            {prompt: trial['other_goal_text'], name: 'other_goal', ticks: [0, 50, 100]},
+            {prompt: trial['other_goal_avg_text'], name: 'other_goal_avg', ticks: [0, 50, 100]},
+          ],
+        require_movement: true,
+        randomize_question_order: true
+      });
+
+      /* Mental state judgments */
+      timeline.push({
+      type: jsPsychSurveyMultiChoice,
+      questions: [
+        {
+          prompt: "Did " + name + " " + trial['outcome_text'] + " intentionally" + "?", 
+          name: 'intent', 
+          options: ['Yes', 'No'], 
+          required: true
+        }, 
+        {
+          prompt: "Did " + name + " " + trial['outcome_text'] + " knowingly" + "?", 
+          name: 'know', 
+          options: ['Yes', 'No'], 
+          required: true
+        }
+      ],
+      randomize_question_order: true
+    });
+
+      /* Punishment judgments */
+      var punish_scale = [
+        "1<br>A very small amount", 
+        "2", 
+        "3",
+        "4<br>A moderate amount", 
+        "5",
+        "6", 
+        "7<br>A very large amount"
+      ];
+
+      timeline.push({
+        type: jsPsychSurveyLikert,
+        preamble: `<div><b>Please answer the questions below.</b>`,
+        questions: [
+          {prompt: "How much punishment does " + name + " deserve?", name: 'punish1', labels: punish_scale},
+          {prompt: "How much trouble should " + name + " get into?", name: 'punish2', labels: punish_scale},
+          {prompt: "How bad is what " + name + " did?", name: 'punish3', labels: punish_scale},
+          {prompt: "How much does " + name + " need to be taught a lesson?", name: 'punish4', labels: punish_scale},
+        ],
+        randomize_question_order: true
+      });
+
+      /* Punishment explanations */
+      timeline.push({
+        type: jsPsychSurveyText,
+        questions: [
+          {prompt: `Please briefly explain what factors affected the judgments you provided on the previous page.`, 
+            rows: 5}
+        ]
+      });
+
+    }
+
+    /* start the experiment */
+    jsPsych.run(timeline);
+
+  </script>
+</html>
