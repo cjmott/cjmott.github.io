@@ -207,8 +207,8 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
                 'text_outcome_short': `${outcome_text_short}`,
                 'risk_obj_text': `How likely was it that the leftover ${item} would collapse?`,
                 'risk_sub_text': `How much did ${name} expect the leftover ${item} to collapse?`,
-                'self_goal_text': `How much did ${name} care about getting paid for the ${item}?`,
-                'self_goal_avg_text': `How much would an average person care about getting paid for the ${item}?`,
+                'self_goal_text': `How much did ${name} care about being able to afford to ${goal}?`,
+                'self_goal_avg_text': `How much would an average person care about being able to afford to ${goal}?`,
                 'other_goal_text': `How much did ${name} care about hurting other people?`,
                 'other_goal_avg_text': `How much would an average person care about hurting other people?`
         }
@@ -236,8 +236,8 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
                 'text_outcome_short': `${outcome_text_short}`,
                 'risk_obj_text': `How likely was it that the leftover ${item} would collapse?`,
                 'risk_sub_text': `How much did ${name} expect the leftover ${item} to collapse?`,
-                'self_goal_text': `How much did ${name} care about getting paid for the ${item}?`,
-                'self_goal_avg_text': `How much would an average person care about getting paid for the ${item}?`,
+                'self_goal_text': `How much did ${name} care about being able to afford to ${goal}?`,
+                'self_goal_avg_text': `How much would an average person care about being able to afford to ${goal}?`,
                 'other_goal_text': `How much did ${name} care about damaging other people's property?`,
                 'other_goal_avg_text': `How much would an average person care about damaging other people's property?`
         }
