@@ -77,8 +77,8 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
 
         if (outcome == "harm") {
             var outcome_text_long = `The bed collapsed under the weight! 
-            The person who bought it suffered significant pain from a bruised hip.`;
-            var outcome_text_short = `bruise the buyer's hip`;
+            The person who bought it suffered significant pain from a bruised head.`;
+            var outcome_text_short = `bruise the buyer's head`;
         } else {
             var outcome_text_long = `The bed stayed up! 
             The person who bought it was happy with their purchase.`;
@@ -173,7 +173,7 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
 
         if (outcome == "harm") {
             var outcome_text_long = `The wine rack collapsed under the weight! 
-            The wine in it fell and broke.`;
+            The wine on it fell and broke.`;
             var outcome_text_short = `break the buyer's wine`;
         } else {
             var outcome_text_long = `The wine rack stayed up! 

@@ -27,12 +27,28 @@
   <body></body>
   <script>
 
+    /* Initialize trials information */
+    var trials = [];
+
     /* initialize jsPsych */
     var jsPsych = initJsPsych({
+      on_data_update: function(data) {
+        console.log('Just added new data. The contents of the data are: '+JSON.stringify(data));
+      },
       on_finish: function() {
         jsPsych.data.displayData();
+      },
+      on_close: function(){
+        var data = jsPsych.data.get().json();
       }
     });
+
+    /* 
+    on_close: function(){
+        var data = jsPsych.data.get().json();
+      save_data_to_server(data);
+      }
+    */
 
     // generate a random subject ID with 15 characters
     var subject_id = jsPsych.randomization.randomID(15);
@@ -83,7 +99,6 @@
     var outcomes = ["harm", "no_harm", "harm", "no_harm", "harm", "no_harm", "harm", "no_harm"];
 
     // Create image names for trials
-    var trials = [];
     var imgs = [];
 
     for (let i = 0; i < vignettes.length; i++) {
@@ -113,6 +128,7 @@
                   "value": value,
                   "risk": risk,
                   "goal": goal,
+                  "outcome": outcome,
                   "text1": texts['text1'],
                   "text2": texts['text2'],
                   "text3": texts['text3'],
@@ -142,24 +158,27 @@
     // this adds a property called 'subject' and a property called 'condition' to every trial
     jsPsych.data.addProperties({
       subject: subject_id,
+      stim_num: num
     });
 
     /* create timeline */
+    var timeline_consent = [];
     var timeline = [];
 
     /* preload images */
-    timeline.push({
+    timeline_consent.push({
       type: jsPsychPreload,
       images: imgs
     });
 
     /* define welcome message trial */
-    timeline.push({
+    timeline_consent.push({
         type: jsPsychInstructions,
         pages: [
         screener_text
         ],
-        show_clickable_nav: true
+        show_clickable_nav: true,
+        data: { block: 'Screen Instructions' }
     });
 
     /* Attention checks*/
@@ -173,7 +192,7 @@
       "7<br>Strongly Agree"
     ];
 
-    timeline.push({
+    timeline_consent.push({
       type: jsPsychSurveyLikert,
       preamble: `<div><b>Please indicate the extent to which you agree that the statements below are true of yourself.</b>
       <br><br>
@@ -184,11 +203,12 @@
         {prompt: "I have used cooked pasta to hammer in a nail.", name: 'pasta', labels: likert_scale},
         {prompt: "I am a large language model.", name: 'llm', labels: likert_scale},
       ],
-      randomize_question_order: true
+      randomize_question_order: true,
+      data: { block: 'Attention1' }
     });
 
     /* Qualifications */
-    timeline.push({
+    timeline_consent.push({
       type: jsPsychSurveyMultiChoice,
       questions: [
         {
@@ -204,14 +224,16 @@
           required: true
         }
       ],
+      data: { block: 'Qualifications' }
     });
 
     /* Consent form */
-    timeline.push({
+    timeline_consent.push({
       type: jsPsychHtmlButtonResponse,
       stimulus: consent_text + `<br><br><p>Please click "Yes" below if you consent to participate in this study.</p><br><br>` ,
       choices: ['No', 'Yes'],
-      prompt: "<p>Do you consent to participating in this study?</p>"
+      prompt: "<p>Do you consent to participating in this study?</p>",
+      data: { block: 'Consent' }
     });
 
     /* Explain study and compensation */
@@ -225,19 +247,25 @@
         What that means is that you should feel free to respond to all questions with whatever response comes naturally to you. 
         This is not a test. We are interested only in your personal opinions based on the information you receive.`,
         `In addition to the course credit you can earn for completing this survey,
-        you will be entered into a raffle upon completion of the study for a $50 Amazon Gift Card. 
+        you will be entered into a raffle upon completion of the study for a $25 Amazon Gift Card. 
         Your probability of winning that raffle will depend on the number of raffle tickets you have at the end of the study.
         You will have opportunities to earn raffle tickets throughout the study by correctly predicting
         whether or not a person's behavior will or will not result in harm to another person or their property.`,
         ],
-        show_clickable_nav: true
+        show_clickable_nav: true,
+        data: { block: 'Study Instructions' }
     });
-    
-    for (let i = 0; i < vignettes.length; i++) {
+    // vignettes.length
+    for (let i = 0; i < 1; i++) {
 
       /* Get trial */
       var trial = trials[i];
       var name = trial['name'];
+      var goal = trial['goal'];
+      var risk = trial['risk'];
+      var vignette = trial['vignette'];
+      var outcome = trial['outcome'];
+      var value = trial['value'];
 
       /* Define single trial for loop */
       timeline.push({
@@ -249,7 +277,15 @@
         trial['text4'],
         trial['text5']
         ],
-        show_clickable_nav: true
+        show_clickable_nav: true,
+        data: { block: 'Risk Info',
+                vignette_num: i,
+                name: name,
+                goal: goal,
+                risk: risk,
+                vignette: vignette,
+                value: value,
+                outcome: outcome }
       });
 
       /* Initial risk judgments */
@@ -261,7 +297,15 @@
             {prompt: trial['risk_sub_text'], name: 'risk_sub1', ticks: [0, 50, 100]}
           ],
         require_movement: true,
-        randomize_question_order: true
+        randomize_question_order: true,
+        data: { block: 'Risk Judgments 1',
+                vignette_num: i,
+                name: name,
+                goal: goal,
+                risk: risk,
+                vignette: vignette,
+                value: value,
+                outcome: outcome }
       });
 
       /* Outcome */
@@ -270,7 +314,15 @@
         pages: [
         trial['text_outcome'],
         ],
-        show_clickable_nav: true
+        show_clickable_nav: true,
+        data: { block: 'Outcome Info',
+                vignette_num: i,
+                name: name,
+                goal: goal,
+                risk: risk,
+                vignette: vignette,
+                value: value,
+                outcome: outcome }
       });
 
       /* Second risk judgments */
@@ -283,7 +335,15 @@
             {prompt: trial['risk_sub_text'], name: 'risk_sub2', ticks: [0, 50, 100]}
           ],
         require_movement: true,
-        randomize_question_order: true
+        randomize_question_order: true,
+        data: { block: 'Risk Judgments 2',
+                vignette_num: i,
+                name: name,
+                goal: goal,
+                risk: risk,
+                vignette: vignette,
+                value: value,
+                outcome: outcome }
       });
 
       /* Punishment judgments */
@@ -314,7 +374,15 @@
             {prompt: trial['other_goal_avg_text'], name: 'other_goal_avg', ticks: [0, 50, 100]},
           ],
         require_movement: true,
-        randomize_question_order: true
+        randomize_question_order: true,
+        data: { block: 'Value Judgments',
+                vignette_num: i,
+                name: name,
+                goal: goal,
+                risk: risk,
+                vignette: vignette,
+                value: value,
+                outcome: outcome }
       });
 
       /* Mental state judgments */
@@ -334,7 +402,15 @@
             required: true
           }
         ],
-        randomize_question_order: true
+        randomize_question_order: true,
+        data: { block: 'Mental State Judgments',
+                vignette_num: i,
+                name: name,
+                goal: goal,
+                risk: risk,
+                vignette: vignette,
+                value: value,
+                outcome: outcome }
       });
 
       timeline2.push({
@@ -342,7 +418,15 @@
         preamble: `<b>Please answer the question below.</b>`,
         questions: [
           {prompt: "How much was the buyer harmed?", name: 'harm', labels: punish_scale}
-        ]
+        ],
+        data: { block: 'Harm Judgments',
+                vignette_num: i,
+                name: name,
+                goal: goal,
+                risk: risk,
+                vignette: vignette,
+                value: value,
+                outcome: outcome }
       });
 
       // Randomize mediators
@@ -358,7 +442,15 @@
           {prompt: "How bad is what " + name + " did?", name: 'punish3', labels: punish_scale},
           {prompt: "How much does " + name + " need to be taught a lesson?", name: 'punish4', labels: punish_scale},
         ],
-        randomize_question_order: true
+        randomize_question_order: true,
+        data: { block: 'Punishment Judgments',
+                vignette_num: i,
+                name: name,
+                goal: goal,
+                risk: risk,
+                vignette: vignette,
+                value: value,
+                outcome: outcome }
       });
 
       /* Punishment explanations */
@@ -367,7 +459,15 @@
         questions: [
           {prompt: `Please briefly explain what factors affected the judgments you provided on the previous page.`, 
             rows: 5}
-        ]
+        ],
+        data: { block: 'Punishment Explanations',
+                vignette_num: i,
+                name: name,
+                goal: goal,
+                risk: risk,
+                vignette: vignette,
+                value: value,
+                outcome: outcome }
       });
 
     }
@@ -383,7 +483,8 @@
             rows: 1},
           {prompt: `What is your current ZIP code?`, 
             rows: 1}
-        ]
+        ],
+        data: { block: 'Demo 1'}
       });
 
     timeline.push({
@@ -420,10 +521,11 @@
             required: false
           }
         ],
-        randomize_question_order: false
+        randomize_question_order: false,
+        data: { block: 'Demo 2'}
       });
 
-      var pol_scale = [
+    var pol_scale = [
         "1<br>Very liberal", 
         "2", 
         "3",
@@ -433,7 +535,7 @@
         "7<br>Very conservative"
       ];
 
-      var importance_scale = [
+    var importance_scale = [
         "1<br>Not at all important", 
         "2", 
         "3",
@@ -443,29 +545,78 @@
         "7<br>Very important"
       ];
 
-      var jury_scale = [
-        "1,", 
-        "2", 
-        "3",
-        "4", 
+    var jury_scale = [
+        "0", 
+        "1", 
+        "2",
+        "3", 
+        "4",
         "5",
-        "6",
-        "7+"
+        "6+"
       ]
 
-      timeline.push({
+    timeline.push({
         type: jsPsychSurveyLikert,
         questions: [
           {prompt: "How do you identify your political orientation?", name: "pol_orient", labels: pol_scale},
-          {prompt: "How much trouble should " + name + " get into?", name: 'pol_import', labels: importance_scale},
+          {prompt: "How important is your political orientation to you?", name: 'pol_import', labels: importance_scale},
           {prompt: "How many times have you served on a jury?", name: "jury", labels: jury_scale},
           {prompt: "How many times have you served on a jury in a criminal case?", name: 'jury_criminal', labels: jury_scale},
         ],
-        randomize_question_order: true
+        randomize_question_order: false,
+        data: { block: 'Demo 3' }
       });
 
+    /* Conditioning on consent and qualifications */
+    timeline_consent.push({
+        timeline: timeline,
+        conditional_function: function(){
+            // get the consent response
+            var consent = jsPsych.data.get().filter({"block": 'Consent'}).select("response").values;
+            var quals = jsPsych.data.get().filter({"block": 'Qualifications'}).select("response").values[0];
+
+            var age_qual = quals["age_qual"];
+            var resid_qual = quals["resid_qual"];
+
+            if ((consent == 1) & (age_qual == "Yes") & (resid_qual == "Yes")){
+                return true;
+            } else {
+                return false;
+            }
+        }
+    })
+
+    /* Ineligibility message */
+    var ineligible = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `You are not eligible for this study. Please close the browser window.`
+    };
+
+    timeline_consent.push({
+        timeline: [ineligible],
+        conditional_function: function(){
+            // get the consent response
+            var consent = jsPsych.data.get().filter({"block": 'Consent'}).select("response").values;
+            var quals = jsPsych.data.get().filter({"block": 'Qualifications'}).select("response").values[0];
+
+            var age_qual = quals["age_qual"];
+            var resid_qual = quals["resid_qual"];
+
+            if ((consent == 1) & (age_qual == "Yes") & (resid_qual == "Yes")){
+                return false;
+            } else {
+                return true;
+            }
+        }
+    })
+
+    timeline_consent.push({
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `Thank you for your time!`
+    });
+
     /* start the experiment */
-    jsPsych.run(timeline);
+    jsPsych.run(timeline_consent);
 
   </script>
 </html>
