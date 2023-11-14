@@ -184,8 +184,8 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
 
     if (["chair", "bed", "stool", "stair"].includes(vignette)) {
 
-        return {'text1': `<p>In order to be able to afford ${goal}, ${name} recently decided to start building 
-                         ${item}s to sell.</p>`,
+        return {'text1': `<p>In order to be able to afford <b>${goal}</b>, ${name} recently decided to start building 
+                         <b>${item}s</b> to sell.</p>`,
                 'text2': `<p>${name} built ${denominator + 1} ${item}s to start. ${name} wanted to test how much weight they could hold, 
                         so ${name} set up ${denominator} of the ${item}s with 150lb weights on them, since that is roughly the weight of a human
                          being.</p> <br>
@@ -196,9 +196,8 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
                         </div>`,
                 'text4': `<p>${name} sold the ${item}s that didn't collapse but had to throw away the ones that did. After selling
                         those ${item}s, ${name} had one leftover ${item} that had not been tested. ${name} decided to sell this ${item} 
-                        without testing it, since if it collapsed during the test ${name} would have to throw it away.</p>
-                        <br>
-                        <p>Someone bought the ${item} and ${item_use}.</p><br>
+                        without testing it, since if it collapsed during the test ${name} would have to throw it away.</p>`,
+                'text5':`<p>Someone bought the ${item} and ${item_use}.</p><br>
                         <div style='float: left;'><img src='${images[2]}', width = 800></img>
                         </div>`,
                 'text_outcome': `<p>${outcome_text_long}</p> <br>
@@ -214,8 +213,8 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
         }
     } else {
 
-        return {'text1': `<p>In order to be able to afford ${goal}, ${name} recently decided to start building 
-                          and selling ${item}s for people ${item_use1}.</p>`,
+        return {'text1': `<p>In order to be able to afford <b>${goal}</b>, ${name} recently decided to start building 
+                          and selling <b>${item}s</b> for people ${item_use1}.</p>`,
                 'text2': `<p>${name} built ${denominator + 1} ${item}s to start. ${name} wanted to test how much weight they could hold, 
                           so ${name} set up ${denominator} of the ${item}s with ${weight}lb weights on them, since that is roughly the weight of a ${object}.</p><br>
                           <div style='float: left;'><img src='${images[0]}', width = 800></img>
@@ -225,9 +224,8 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
                           </div>`,
                 'text4': `<p>${name} sold the ${item}s that didn't collapse but had to throw away the ones that did. After selling
                           those ${item}s, ${name} had one leftover ${item} that had not been tested. ${name} decided to sell this ${item} 
-                          without testing it, since if it collapsed during the test ${name} would have to throw it away.</p>
-                          <br>
-                          <p>Someone bought the ${item} and ${item_use2}.</p><br>
+                          without testing it, since if it collapsed during the test ${name} would have to throw it away.</p>`,
+                'text5': `<p>Someone bought the ${item} and ${item_use2}.</p><br>
                           <div style='float: left;'><img src='${images[2]}', width = 800></img>
                           </div>`,
                 'text_outcome': `<p>${outcome_text_long}</p> <br>
