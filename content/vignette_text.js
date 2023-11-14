@@ -45,13 +45,13 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
     
     } else if (vignette == "stair") {
         var item = "step stool";
-        var denominator = 30;
+        var denominator = 40;
         var item_use = "stood on it while changing a light bulb";
         
         if (risk == "high") {
-            var numerator = 24;
+            var numerator = 32;
         } else {
-            var numerator = 6;
+            var numerator = 8;
         }
 
         if (outcome == "harm") {
@@ -135,16 +135,16 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
     
     } else if (vignette == "desk") {
         var item = "desk";
-        var denominator = 25;
+        var denominator = 30;
         var item_use1 = "to use when working on a computer";
         var item_use2 = "put their computer on it"
         var object = "computer";
-        var weight = "20";
+        var weight = "30";
         
         if (risk == "high") {
-            var numerator = 20;
+            var numerator = 24;
         } else {
-            var numerator = 5;
+            var numerator = 6;
         }
 
         if (outcome == "harm") {
