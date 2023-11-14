@@ -182,7 +182,7 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
         }
     };
 
-    if (["chair", "bed", "stool", "stair"].includes(item)) {
+    if (["chair", "bed", "stool", "stair"].includes(vignette)) {
 
         return {'text1': `<p>In order to be able to afford to ${goal}, ${name} recently decided to start building 
                          and selling ${item}s to sell.</p>`,

@@ -345,7 +345,7 @@
 
       // Randomize mediators
       var timeline2 = jsPsych.randomization.repeat(timeline2, 1);
-      timeline.concat(timeline2);
+      var timeline = timeline.concat(timeline2);
 
       timeline.push({
         type: jsPsychSurveyLikert,
@@ -369,6 +369,98 @@
       });
 
     }
+
+    /* Demographics */
+    timeline.push({
+        type: jsPsychSurveyText,
+        questions: [
+          {prompt: `What is your age in years?`, 
+            rows: 1},
+          {prompt: `What is the ZIP code where you have lived the longest? 
+            (If the address is outside the United States, please enter the country name and postal code.)`, 
+            rows: 1},
+          {prompt: `What is your current ZIP code?`, 
+            rows: 1}
+        ]
+      });
+
+    timeline.push({
+        type: jsPsychSurveyMultiChoice,
+        questions: [
+          {
+            prompt: "How do you identify your ethnicity??", 
+            name: 'ethnicity', 
+            options: ['Hispanic or Latino/Latina', 
+            'Not Hispanic or Latino/Latina',
+            'Option Not Listed',
+            'Prefer Not to Say'], 
+            required: false
+          }, 
+          {
+            prompt: "How do you identify your race?", 
+            name: 'race', 
+            options: ['White or European-American', 
+            'Black or African-American',
+            'Asian or Asian-American',
+            'Native American or Pacific Islander',
+            'Option Not Listed',
+            'Prefer Not to Say'], 
+            required: false
+          },
+          {
+            prompt: "How do you identify your gender?", 
+            name: 'race', 
+            options: ['Male',
+            'Female',
+            'Non-Binary',
+            'Option Not Listed',
+            'Prefer Not to Say'], 
+            required: false
+          }
+        ],
+        randomize_question_order: false
+      });
+
+      var pol_scale = [
+        "1<br>Very liberal", 
+        "2", 
+        "3",
+        "4<br>In the middle", 
+        "5",
+        "6",
+        "7<br>Very conservative"
+      ];
+
+      var importance_scale = [
+        "1<br>Not at all important", 
+        "2", 
+        "3",
+        "4<br>Moderately important", 
+        "5",
+        "6",
+        "7<br>Very important"
+      ];
+
+      var jury_scale = [
+        "1,", 
+        "2", 
+        "3",
+        "4", 
+        "5",
+        "6",
+        "7+"
+      ]
+
+      timeline.push({
+        type: jsPsychSurveyLikert,
+        questions: [
+          {prompt: "How do you identify your political orientation?", name: "pol_orient", labels: pol_scale},
+          {prompt: "How much trouble should " + name + " get into?", name: 'pol_import', labels: importance_scale},
+          {prompt: "How many times have you served on a jury?", name: "jury", labels: jury_scale},
+          {prompt: "How many times have you served on a jury in a criminal case?", name: 'jury_criminal', labels: jury_scale},
+        ],
+        randomize_question_order: true
+      });
 
     /* start the experiment */
     jsPsych.run(timeline);
