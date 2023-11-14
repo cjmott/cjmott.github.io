@@ -182,7 +182,7 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
         }
     };
 
-    if (vignette in ["chair", "bed", "stool", "stair"]) {
+    if (["chair", "bed", "stool", "stair"].includes(item)) {
 
         return {'text1': `<p>In order to be able to afford to ${goal}, ${name} recently decided to start building 
                          and selling ${item}s to sell.</p>`,
@@ -196,8 +196,8 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
                         </div>`,
                 'text4': `<p>${name} sold the ${item}s that didn't collapse but had to throw away the ones that did. After selling
                         those ${item}s, ${name} had one leftover ${item} that had not been tested. ${name} decided to sell this ${item} 
-                        without testing it, since if it collapsed during the test ${name} would have to throw it away</p>.
-                        <br><br>
+                        without testing it, since if it collapsed during the test ${name} would have to throw it away.</p>
+                        <br>
                         <p>Someone bought the ${item} and ${item_use}.</p><br>
                         <div style='float: left;'><img src='${images[2]}', width = 800></img>
                         </div>`,
@@ -226,7 +226,7 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
                 'text4': `<p>${name} sold the ${item}s that didn't collapse but had to throw away the ones that did. After selling
                           those ${item}s, ${name} had one leftover ${item} that had not been tested. ${name} decided to sell this ${item} 
                           without testing it, since if it collapsed during the test ${name} would have to throw it away.</p>
-                          <br><br>
+                          <br>
                           <p>Someone bought the ${item} and ${item_use2}.</p><br>
                           <div style='float: left;'><img src='${images[2]}', width = 800></img>
                           </div>`,
@@ -244,4 +244,4 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
     };
 };
 
-console.log(vignette_text("Alex", "to jump", "high", "chair", "harm", ["im1.png", "im2.png", "im3.png", "im4.png"])["text1"])
+//console.log(vignette_text("Alex", "to jump", "high", "chair", "harm", ["im1.png", "im2.png", "im3.png", "im4.png"])["text3"]);

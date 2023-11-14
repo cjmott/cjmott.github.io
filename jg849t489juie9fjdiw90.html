@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My experiment</title>
-    <script src="https://unpkg.com/jspsych@7.3.3"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-html-slider-response@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.1"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.2"></script>
+    <title>Experiment</title>
+    <script src="jspsych/dist/jspsych.js"></script>
+    <script src="jspsych/dist/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/dist/plugin-image-keyboard-response.js"></script>
+    <script src="jspsych/dist/plugin-preload.js"></script>
+    <script src="jspsych/dist/plugin-html-button-response.js"></script>
+    <script src="jspsych/dist/plugin-html-slider-response.js"></script>
+    <script src="jspsych/dist/plugin-instructions.js"></script>
+    <script src="jspsych/dist/plugin-survey-multi-choice.js"></script>
+    <script src="jspsych/dist/plugin-survey-text.js"></script>
     <script src="jspsych/dist/plugin-survey-likert.js"></script>
+    <script src="jspsych/dist/plugin-multiple-slider.js"></script>
     <script src="content/consent.js"></script>
     <script src="content/screener_text.js"></script>
     <script src="content/names.js"></script>
     <script src="content/vignette_text.js"></script>
-    <link href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <link href="jspsych/dist/jspsych.css" rel="stylesheet" type="text/css" />
     <style> 
       .jspsych-content {
         text-align: left; width: 600px;
@@ -37,12 +38,12 @@
     var subject_id = jsPsych.randomization.randomID(15);
 
     // Shuffle risk, value, and outcome conditions
-    var num = toString(Math.getRandomInt(99));
+    var num = (Math.random() * 99 | 0).toString();
 
-    var names = vignettes = jsPsych.randomization.repeat(names, 1);
+    var names = jsPsych.randomization.repeat(names, 1);
 
-    var vignetteArray = ["chair", "bed", "stool", "stair", "tv", "lamp", "desk", "rack"];
-    //var vignettes = jsPsych.randomization.repeat(vignetteArray, 1);
+    var vignetteArray = ["chair", "bed", "stool", "stair", "tv", "lamp", "desk", "wine"];
+    var vignettes = jsPsych.randomization.repeat(vignetteArray, 1);
 
     var riskArray = ["low", "low", "low", "low", "high", "high", "high", "high"];
     //var risks = jsPsych.randomization.repeat(riskArray, 1);
@@ -60,8 +61,9 @@
     var badGoalsArray = ["a new TV", "a new couch", "a new computer", "a new dishwasher", "a new jacket"];
     var badGoals = jsPsych.randomization.repeat(badGoalsArray, 1);
 
+    /*
     var outcomes = [];
-    for (r in risks) {
+    for (r in riskArray) {
       if (r == "low") {
         var p = 0.2;
       } else {
@@ -76,29 +78,31 @@
       }
       outcomes.push(outcome_text);
     }
+    */
 
-    var outcome = ["harm", "no_harm", "harm", "no_harm", "harm", "no_harm", "harm", "no_harm"];
+    var outcomes = ["harm", "no_harm", "harm", "no_harm", "harm", "no_harm", "harm", "no_harm"];
 
     // Create image names for trials
-    trials = [];
+    var trials = [];
+    var imgs = [];
 
     for (let i = 0; i < vignettes.length; i++) {
       var name = names[i];
-      var vignette = vignetteArray[i];
+      var vignette = vignettes[i];
       var value = valueArray[i];
       var risk = riskArray[i];
-      var outcome = outcome[i];
+      var outcome = outcomes[i];
 
       if (value == "low") {
-        var goal = badGoals.pop()
+        var goal = badGoals.pop();
       } else {
-        var goal = goodGoals.pop()
+        var goal = goodGoals.pop();
       }
 
-      var image1 = "images/" + vign + "/1_vign_" + vignette + ".png";
-      var image2 = "images/" + vign + "/2_vign_" + vignette + "_risk_" + risk + "_" + num + ".png";
-      var image3 = "images/" + vign + "/3_vign_" + vignette + ".png";
-      var image4 = "images/" + vign + "4_vign_" + vignette + "_outcome_" + outcome + ".png";
+      var image1 = "images/" + vignette + "/1_vign_" + vignette + ".png";
+      var image2 = "images/" + vignette + "/2_vign_" + vignette + "_risk_" + risk + "_" + num + ".png";
+      var image3 = "images/" + vignette + "/3_vign_" + vignette + ".png";
+      var image4 = "images/" + vignette + "/4_vign_" + vignette + "_outcome_" + outcome + ".png";
 
       var texts = vignette_text(name, goal, risk, vignette, outcome, [image1, image2, image3, image4]);
 
@@ -117,12 +121,18 @@
                   "text_outcome_short": texts['text_outcome_short'],
                   "risk_obj_text": texts['risk_obj_text'],
                   "risk_sub_text": texts['risk_sub_text'],
+                  "self_goal_text": texts['self_goal_text'],
+                  "self_goal_avg_text": texts['self_goal_avg_text'],
+                  "other_goal_text": texts['other_goal_text'],
+                  "other_goal_avg_text": texts['other_goal_avg_text'],
                   "image1": image1,
                   "image2": image2,
                   "image3": image3,
-                  "image4": image4})
+                  "image4": image4});
 
-    }
+      imgs.push(...[image1, image2, image3, image4]);
+
+    };
 
     // Randomize trial order
     var trials = jsPsych.randomization.repeat(trials, 1);
@@ -221,7 +231,7 @@
         ],
         show_clickable_nav: true
     });
-
+    
     for (let i = 0; i < vignettes.length; i++) {
 
       /* Get trial */
@@ -290,23 +300,23 @@
 
       /* Mental state judgments */
       timeline.push({
-      type: jsPsychSurveyMultiChoice,
-      questions: [
-        {
-          prompt: "Did " + name + " " + trial['outcome_text'] + " intentionally" + "?", 
-          name: 'intent', 
-          options: ['Yes', 'No'], 
-          required: true
-        }, 
-        {
-          prompt: "Did " + name + " " + trial['outcome_text'] + " knowingly" + "?", 
-          name: 'know', 
-          options: ['Yes', 'No'], 
-          required: true
-        }
-      ],
-      randomize_question_order: true
-    });
+        type: jsPsychSurveyMultiChoice,
+        questions: [
+          {
+            prompt: "Did " + name + " " + trial['text_outcome_short'] + " intentionally" + "?", 
+            name: 'intent', 
+            options: ['Yes', 'No'], 
+            required: true
+          }, 
+          {
+            prompt: "Did " + name + " " + trial['text_outcome_short'] + " knowingly" + "?", 
+            name: 'know', 
+            options: ['Yes', 'No'], 
+            required: true
+          }
+        ],
+        randomize_question_order: true
+      });
 
       /* Punishment judgments */
       var punish_scale = [
