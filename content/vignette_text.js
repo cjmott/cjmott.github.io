@@ -187,7 +187,7 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
         return {'text1': `<p>In order to be able to afford to ${goal}, ${name} recently decided to start building 
                          and selling ${item}s to sell.</p>`,
                 'text2': `<p>${name} built ${denominator + 1} ${item}s to start. ${name} wanted to test how much weight they could hold, 
-                        so ${name} set up ${denominator} of the chairs with 150lb weights on them, since that is roughly the weight of a human
+                        so ${name} set up ${denominator} of the ${item}s with 150lb weights on them, since that is roughly the weight of a human
                          being.</p> <br>
                          <div style='float: left;'><img src='${images[0]}', width = 800></img>
                         </div>`,
