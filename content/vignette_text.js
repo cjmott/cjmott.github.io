@@ -67,7 +67,7 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
     } else if (vignette == "bed") {
         var item = "bed";
         var denominator = 25;
-        var item_use = "slept in it that night";
+        var item_use = "sat on it to see how comfortable it was";
         
         if (risk == "high") {
             var numerator = 20;
@@ -161,7 +161,7 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
         var item = "wine rack";
         var denominator = 50;
         var item_use1 = "to use to hold a wine collection";
-        var item_use2 = "put their wine in it"
+        var item_use2 = "put their wine on it"
         var object = "wine collection";
         var weight = "50";
         
@@ -184,7 +184,7 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
 
     if (["chair", "bed", "stool", "stair"].includes(vignette)) {
 
-        return {'text1': `<p>In order to be able to afford to ${goal}, ${name} recently decided to start building 
+        return {'text1': `<p>In order to be able to afford ${goal}, ${name} recently decided to start building 
                          and selling ${item}s to sell.</p>`,
                 'text2': `<p>${name} built ${denominator + 1} ${item}s to start. ${name} wanted to test how much weight they could hold, 
                         so ${name} set up ${denominator} of the ${item}s with 150lb weights on them, since that is roughly the weight of a human
@@ -214,7 +214,7 @@ var vignette_text = function(name, goal, risk, vignette, outcome, images) {
         }
     } else {
 
-        return {'text1': `<p>In order to be able to afford to ${goal}, ${name} recently decided to start building 
+        return {'text1': `<p>In order to be able to afford ${goal}, ${name} recently decided to start building 
                           and selling ${item}s for people ${item_use1}.</p>`,
                 'text2': `<p>${name} built ${denominator + 1} ${item}s to start. ${name} wanted to test how much weight they could hold, 
                           so ${name} set up ${denominator} of the ${item}s with ${weight}lb weights on them, since that is roughly the weight of a ${object}.</p><br>
